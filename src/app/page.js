@@ -10,6 +10,8 @@ import Projects from '@/components/home/Projects';
 import Contact from '@/components/home/Contact';
 import Footer from '@/components/home/Footer';
 
+export const dynamic = 'force-dynamic';
+
 export default async function Home() {
   await connectDB();
 
