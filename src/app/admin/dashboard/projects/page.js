@@ -2,6 +2,7 @@
 import { useState, useEffect } from 'react';
 import { Plus, Trash2, ExternalLink } from 'lucide-react';
 import toast from 'react-hot-toast';
+import Image from 'next/image';
 
 export default function ProjectsPage() {
   const [projects, setProjects] = useState([]);
@@ -88,35 +89,37 @@ export default function ProjectsPage() {
         {projects.map((p) => (
           <div key={p._id} className="bg-gray-800 p-4 rounded-lg flex justify-between items-center border border-gray-700">
             <div className="flex items-center gap-4">
-              <img 
+              <Image 
                 src={p.image || 'https://via.placeholder.com/150'} 
-                alt="" 
+                alt=""
+                  width={60} 
+                  height={60}
                 className="w-16 h-16 object-cover rounded bg-gray-700" 
               />
               <div>
                 <h3 className="font-bold text-white">{p.title}</h3>
                 <p className="text-sm text-gray-400">{p.category}</p>
                 <div className="flex gap-2 mt-1">
-                   {p.technologies?.slice(0, 3).map((tech, i) => (
-                     <span key={i} className="text-xs bg-gray-700 px-2 py-0.5 rounded text-blue-300">{tech}</span>
-                   ))}
+                    {p.technologies?.slice(0, 3).map((tech, i) => (
+                      <span key={i} className="text-xs bg-gray-700 px-2 py-0.5 rounded text-blue-300">{tech}</span>
+                    ))}
                 </div>
               </div>
             </div>
             
             <div className="flex items-center gap-3">
-               {p.liveUrl && (
-                 <a href={p.liveUrl} target="_blank" rel="noreferrer" className="text-gray-400 hover:text-white">
-                   <ExternalLink size={18} />
-                 </a>
-               )}
-               <button 
-                 onClick={() => handleDelete(p._id)} 
-                 className="text-red-400 hover:text-red-500 transition p-2 hover:bg-red-500/10 rounded"
-                 title="Delete Project"
-               >
-                 <Trash2 size={18} />
-               </button>
+                {p.liveUrl && (
+                  <a href={p.liveUrl} target="_blank" rel="noreferrer" className="text-gray-400 hover:text-white">
+                    <ExternalLink size={18} />
+                  </a>
+                )}
+                <button 
+                  onClick={() => handleDelete(p._id)} 
+                  className="text-red-400 hover:text-red-500 transition p-2 hover:bg-red-500/10 rounded"
+                  title="Delete Project"
+                >
+                  <Trash2 size={18} />
+                </button>
             </div>
           </div>
         ))}
@@ -149,12 +152,22 @@ export default function ProjectsPage() {
               onChange={e => setForm({...form, description: e.target.value})} 
             />
             
-            <input 
-              className="w-full bg-gray-700 p-3 rounded text-white border border-gray-600 focus:border-blue-500 outline-none" 
-              placeholder="Category (e.g. Web, Mobile)" 
-              required 
-              onChange={e => setForm({...form, category: e.target.value})} 
-            />
+            {/* Replace the Category input with this Select */}
+            <div className="space-y-2">
+              <label className="text-sm text-gray-400">Category</label>
+              <select 
+                className="w-full bg-gray-700 p-3 rounded text-white focus:outline-none focus:ring-2 focus:ring-blue-500"
+                onChange={(e) => setForm({ ...form, category: e.target.value })}
+                required
+              >
+                <option value="" disabled selected>Select a category</option>
+                <option value="Frontend">Frontend</option>
+                <option value="Backend">Backend</option>
+                <option value="Fullstack">Fullstack</option>
+                <option value="Python">Python</option>
+                <option value="Design">Design</option>
+              </select>
+            </div>
             
             <input 
               className="w-full bg-gray-700 p-3 rounded text-white border border-gray-600 focus:border-blue-500 outline-none" 
@@ -163,16 +176,16 @@ export default function ProjectsPage() {
             />
             
             <div className="grid grid-cols-2 gap-4">
-               <input 
-                 className="w-full bg-gray-700 p-3 rounded text-white border border-gray-600 focus:border-blue-500 outline-none" 
-                 placeholder="GitHub URL" 
-                 onChange={e => setForm({...form, githubUrl: e.target.value})} 
-               />
-               <input 
-                 className="w-full bg-gray-700 p-3 rounded text-white border border-gray-600 focus:border-blue-500 outline-none" 
-                 placeholder="Live URL" 
-                 onChange={e => setForm({...form, liveUrl: e.target.value})} 
-               />
+                <input 
+                  className="w-full bg-gray-700 p-3 rounded text-white border border-gray-600 focus:border-blue-500 outline-none" 
+                  placeholder="GitHub URL" 
+                  onChange={e => setForm({...form, githubUrl: e.target.value})} 
+                />
+                <input 
+                  className="w-full bg-gray-700 p-3 rounded text-white border border-gray-600 focus:border-blue-500 outline-none" 
+                  placeholder="Live URL" 
+                  onChange={e => setForm({...form, liveUrl: e.target.value})} 
+                />
             </div>
 
             <div className="flex justify-end gap-2 mt-6">

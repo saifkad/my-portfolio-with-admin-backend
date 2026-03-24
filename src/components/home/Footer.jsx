@@ -19,12 +19,12 @@ export default function Footer() {
             >
               <Github size={24} />
             </a>
-            <a
+            {/* <a
               href="/admin/dashboard"
               className="text-gray-400 hover:text-blue-400 transition text-sm"
             >
               Admin
-            </a>
+            </a> */}
           </div>
         </div>
 

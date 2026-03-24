@@ -1,28 +1,34 @@
 import { NextResponse } from 'next/server';
-import { jwtVerify } from 'jose'; // Use jose instead of jsonwebtoken
+import { jwtVerify } from 'jose';
 
 export async function middleware(request) {
   const path = request.nextUrl.pathname;
+  const secretKey = request.nextUrl.searchParams.get('secret');
   
-  // Protect admin routes
-  if (path.startsWith('/admin') && path !== '/admin/login') {
+  // 1. PROTECT THE LOGIN PAGE ITSELF
+  if (path.startsWith('/admin/login')) {
+    // If the URL does not contain the correct secret key, send them home
+    if (secretKey !== process.env.ADMIN_URL_KEY) {
+      return NextResponse.redirect(new URL('/', request.url));
+    }
+  }
+
+  // 2. PROTECT THE DASHBOARD (Existing Logic)
+  if (path.startsWith('/admin/dashboard')) {
     const token = request.cookies.get('admin_token')?.value;
     
     if (!token) {
-      return NextResponse.redirect(new URL('/admin/login', request.url));
+      // If they try to access dashboard without token, send to login WITH the secret key
+      // (So they don't get stuck in a redirect loop if they are legit)
+      return NextResponse.redirect(new URL(`/admin/login?secret=${process.env.ADMIN_URL_KEY}`, request.url));
     }
     
     try {
-      // jose requires the secret to be a Uint8Array (TextEncoder)
       const secret = new TextEncoder().encode(process.env.JWT_SECRET);
-      
-      // Verify using jose (Edge compatible)
       const { payload } = await jwtVerify(token, secret);
-      
-      // Optional: You can check payload role here if needed
     } catch (error) {
-      // If token is invalid or expired, redirect to login
-      return NextResponse.redirect(new URL('/admin/login', request.url));
+      console.error('Token verification failed:', error);
+      return NextResponse.redirect(new URL(`/admin/login?secret=${process.env.ADMIN_URL_KEY}`, request.url));
     }
   }
   

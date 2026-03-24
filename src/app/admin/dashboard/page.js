@@ -1,7 +1,7 @@
 // app/admin/dashboard/page.js
 'use client';
 import { useEffect, useState } from 'react';
-import { Users, Code2, FolderKanban, Mail, TrendingUp } from 'lucide-react';
+import { Code2, FolderKanban, Mail, TrendingUp } from 'lucide-react';
 
 export default function AdminDashboard() {
   const [stats, setStats] = useState({
