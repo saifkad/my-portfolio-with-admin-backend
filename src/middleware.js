@@ -3,35 +3,44 @@ import { jwtVerify } from 'jose';
 
 export async function middleware(request) {
   const path = request.nextUrl.pathname;
+  
+  // Get the secret key from the URL query parameters
   const secretKey = request.nextUrl.searchParams.get('secret');
   
-  // 1. PROTECT THE LOGIN PAGE ITSELF
+  // ----------------------------------------------------
+  // RULE 1: Protect the Login Page Itself
+  // ----------------------------------------------------
   if (path.startsWith('/admin/login')) {
-    // If the URL does not contain the correct secret key, send them home
+    // If the URL does NOT contain the correct secret key, kick them out to Home.
     if (secretKey !== process.env.ADMIN_URL_KEY) {
       return NextResponse.redirect(new URL('/', request.url));
     }
   }
 
-  // 2. PROTECT THE DASHBOARD (Existing Logic)
+  // ----------------------------------------------------
+  // RULE 2: Protect the Dashboard
+  // ----------------------------------------------------
   if (path.startsWith('/admin/dashboard')) {
     const token = request.cookies.get('admin_token')?.value;
     
     if (!token) {
-      // If they try to access dashboard without token, send to login WITH the secret key
-      // (So they don't get stuck in a redirect loop if they are legit)
-      return NextResponse.redirect(new URL(`/admin/login?secret=${process.env.ADMIN_URL_KEY}`, request.url));
+      // IMPORTANT: We redirect to /admin/login WITHOUT the secret.
+      // This ensures that if they aren't logged in, they get sent to 
+      // the "protected" login page, which will then reject them.
+      return NextResponse.redirect(new URL('/admin/login', request.url));
     }
     
     try {
       const secret = new TextEncoder().encode(process.env.JWT_SECRET);
-      const { payload } = await jwtVerify(token, secret);
+      await jwtVerify(token, secret);
+      // Token is valid, allow access
     } catch (error) {
-      console.error('Token verification failed:', error);
-      return NextResponse.redirect(new URL(`/admin/login?secret=${process.env.ADMIN_URL_KEY}`, request.url));
+      // Token is invalid, redirect to login (without secret)
+      return NextResponse.redirect(new URL('/admin/login', request.url));
     }
   }
   
+  // If everything is fine, continue
   return NextResponse.next();
 }
 
