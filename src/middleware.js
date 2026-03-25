@@ -35,6 +35,7 @@ export async function middleware(request) {
       await jwtVerify(token, secret);
       // Token is valid, allow access
     } catch (error) {
+      console.error('JWT verification failed:', error);
       // Token is invalid, redirect to login (without secret)
       return NextResponse.redirect(new URL('/admin/login', request.url));
     }
