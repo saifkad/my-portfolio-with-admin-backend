@@ -39,7 +39,7 @@ export default function Hero({ userData }) {
             alt="Profile"
             width={170}
             height={170}
-            className="relative mt-2 w-40 h-40 rounded-full border-4 border-white dark:border-gray-800 mx-auto object-cover shadow-2xl"
+            className="relative mt-2 w-56 h-56 rounded-full border-4 border-white dark:border-gray-800 mx-auto object-cover shadow-2xl"
           />
           <div className="absolute bottom-2 right-2 w-6 h-6 bg-green-500 rounded-full border-4 border-white dark:border-gray-900 animate-pulse"></div>
         </div>

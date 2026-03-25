@@ -31,7 +31,7 @@ export async function PUT(request) {
       {}, // Find the first (and only) user document
       data, // The new data
       { 
-        new: true, // Return the updated document
+        returnDocument: 'after', // Return the updated document
         upsert: true, 
         setDefaultsOnInsert: true,
         // Use this line if you are on Mongoose 7+ to remove warnings:
