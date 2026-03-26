@@ -28,7 +28,7 @@ export async function PUT(request) {
       {}, // Find any user (since we only have one admin profile)
       data, 
       { 
-        new: true,      // Return the updated document
+        returnDocument: 'after',      // Return the updated document
         upsert: true,   // Create if it doesn't exist
         setDefaultsOnInsert: true 
       }

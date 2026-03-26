@@ -66,13 +66,13 @@ export default function Hero({ userData }) {
         <div className="flex justify-center space-x-6 animate-slide-up" style={{ animationDelay: '0.4s' }}>
           <a
             href="#contact"
-            className="px-8 py-4 bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white rounded-full font-semibold transition-all transform hover:scale-105 shadow-lg shadow-blue-500/30"
+            className="px-8 py-4 bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white w-40 h-50 rounded-full font-semibold transition-all transform hover:scale-105 shadow-lg shadow-blue-500/30"
           >
             Hire Me
           </a>
           <a
             href="#projects"
-            className="px-8 py-4 border-2 border-gray-300 dark:border-gray-700 hover:border-blue-500 hover:text-blue-500 dark:hover:text-blue-400 rounded-full font-semibold transition-all transform hover:scale-105 bg-white/50 dark:bg-gray-800/50 backdrop-blur-sm"
+            className="px-8 py-4 border-2 border-gray-300 dark:border-gray-700 hover:border-blue-500 hover:text-blue-500 dark:hover:text-blue-400 w-40 h-50 rounded-full font-semibold transition-all transform hover:scale-105 bg-white/50 dark:bg-gray-800/50 backdrop-blur-sm"
           >
             View Work
           </a>

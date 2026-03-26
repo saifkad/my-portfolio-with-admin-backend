@@ -27,7 +27,7 @@ export default function Header() {
     }`}>
       <nav className="container mx-auto px-6 flex justify-between items-center">
         <Link href="/" className="text-2xl font-bold text-primary-600 dark:text-primary-400">
-          &lt;Dev /&gt;
+          &lt;SaifDev /&gt;
         </Link>
 
         {/* Desktop Navigation */}

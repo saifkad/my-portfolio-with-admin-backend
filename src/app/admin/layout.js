@@ -24,6 +24,7 @@ export default function AdminLayout({ children }) {
         router.push('/admin/login');
       }
     } catch (error) {
+      console.error('Error:', error);
       toast.error('Failed to logout');
     }
   };
