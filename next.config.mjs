@@ -11,6 +11,10 @@ const nextConfig = {
         protocol: 'https',
         hostname: '**', // Allows all https domains (useful for admin dashboards where users paste any link)
       },
+      {
+        protocol: 'https',
+        hostname: 'filedn.eu',
+      },
     ],
   },
 };
