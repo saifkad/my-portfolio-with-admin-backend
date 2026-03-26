@@ -9,7 +9,7 @@ export const metadata = {
   title: 'Saif Dev Portfolio',
   description: 'Professional developer portfolio',
   icons: {
-    icon: '/public/logo.png',
+    icon: '/logo.png',
   },
 };
 
