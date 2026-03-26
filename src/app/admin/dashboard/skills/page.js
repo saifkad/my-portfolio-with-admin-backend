@@ -32,9 +32,22 @@ export default function SkillsPage() {
   };
 
   const handleDelete = async (id) => {
-    if(!confirm('Delete this skill?')) return;
     // Note: You would need a DELETE /api/skills/[id] route for this to work fully
-    toast.info('Implement DELETE API route to fully delete');
+    if (!window.confirm('Are you sure you want to delete this skill?')) {
+      return;
+    }
+    try {
+      const res = await fetch(`/api/skills/${id}`, {
+        method: 'DELETE',
+      });
+      if (res.ok) {
+        toast.success('Skill deleted!');
+        setSkills(skills.filter(s => s._id !== id)); // Optimistic UI update
+      }
+    } catch (error) {
+      console.error('Delete Error:', error);
+      toast.error('Failed to delete skill');
+    }
   };
 
   return (
