@@ -1,11 +1,14 @@
-import './globals.css';
+declare const require: (path: string) => unknown;
+
+require('./globals.css');
+import type { Metadata } from 'next';
 import { Inter } from 'next/font/google';
 import { Toaster } from 'react-hot-toast';
 import { ThemeProviders } from '@/components/ThemeProviders'; // Import
 
 const inter = Inter({ subsets: ['latin'] });
 
-export const metadata = {
+export const metadata: Metadata = {
   title: 'Saif Dev Portfolio',
   description: 'Professional developer portfolio',
   icons: {

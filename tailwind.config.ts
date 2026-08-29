@@ -42,7 +42,11 @@ module.exports = {
   },
   plugins: [
     // .animation-delay-2000 utility (used in Hero)
-    function ({ addUtilities }) {
+    function ({
+      addUtilities,
+    }: {
+      addUtilities: (utilities: Record<string, Record<string, string>>) => void;
+    }) {
       addUtilities({
         '.animation-delay-2000': { 'animation-delay': '2000ms' },
       });
