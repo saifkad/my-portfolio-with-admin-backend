@@ -2,30 +2,38 @@ import { NextResponse } from 'next/server';
 import connectDB from '@/lib/mongodb';
 import Skill from '@/lib/models/Skill';
 
-// DELETE handler to remove a skill
+export async function PUT(request, { params }) {
+  try {
+    await connectDB();
+    const body = await request.json();
+    const { _id, __v, ...data } = body; // strip internals
+
+    const skill = await Skill.findByIdAndUpdate(params.id, data, {
+      new: true,
+      runValidators: true,
+    });
+    if (!skill) return NextResponse.json({ error: 'Skill not found' }, { status: 404 });
+    return NextResponse.json(skill);
+  } catch (error) {
+    if (error.name === 'ValidationError' || error.name === 'CastError') {
+      return NextResponse.json({ error: error.message }, { status: 400 });
+    }
+    console.error('Error updating skill:', error);
+    return NextResponse.json({ error: 'Failed to update skill' }, { status: 500 });
+  }
+}
+
 export async function DELETE(request, { params }) {
   try {
     await connectDB();
-    
-    // Get the ID from the URL (e.g., /api/skills/12345 -> params.id is "12345")
-    const { id } = params;
-
-    // Find and delete the skill
-    const deletedSkill = await Skill.findByIdAndDelete(id);
-
-    if (!deletedSkill) {
-      return NextResponse.json(
-        { error: 'Skill not found' },
-        { status: 404 }
-      );
-    }
-
-    return NextResponse.json({ success: true, message: 'Skill deleted' });
+    const skill = await Skill.findByIdAndDelete(params.id);
+    if (!skill) return NextResponse.json({ error: 'Skill not found' }, { status: 404 });
+    return NextResponse.json({ success: true });
   } catch (error) {
-    console.error('Delete Error:', error);
-    return NextResponse.json(
-      { error: 'Failed to delete skill' },
-      { status: 500 }
-    );
+    if (error.name === 'CastError') {
+      return NextResponse.json({ error: 'Invalid ID' }, { status: 400 });
+    }
+    console.error('Error deleting skill:', error);
+    return NextResponse.json({ error: 'Failed to delete skill' }, { status: 500 });
   }
 }

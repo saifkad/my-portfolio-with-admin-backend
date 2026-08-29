@@ -19,9 +19,11 @@ export default function AdminLayout({ children }) {
   const handleLogout = async () => {
     try {
       const res = await fetch('/api/auth/logout', { method: 'POST' });
-      if (res.ok) {
+        if (res.ok) {
         toast.success('Logged out successfully');
-        router.push('/admin/login');
+        router.push('/'); // was '/admin/login' — that page requires ?secret= and would bounce you anyway
+      } else {
+        toast.error('Failed to logout');
       }
     } catch (error) {
       console.error('Error:', error);

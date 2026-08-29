@@ -13,17 +13,24 @@ import Footer from '@/components/home/Footer';
 export const dynamic = 'force-dynamic';
 
 export default async function Home() {
-  await connectDB();
+  let userData = null;
+  let skills = [];
+  let projects = [];
 
-  // 1. Fetch Data
-  const userDoc = await User.findOne({}).lean();
-  const skillsDocs = await Skill.find({}).sort({ order: 1 }).lean();
-  const projectsDocs = await Project.find({}).sort({ order: 1 }).lean();
-
-  // 2. Convert to Plain JSON (Fixes the warnings)
-  const userData = userDoc ? JSON.parse(JSON.stringify(userDoc)) : null;
-  const skills = JSON.parse(JSON.stringify(skillsDocs));
-  const projects = JSON.parse(JSON.stringify(projectsDocs));
+  try {
+    await connectDB();
+    const [userDoc, skillsDocs, projectsDocs] = await Promise.all([
+      User.findOne({}).lean(),
+      Skill.find({}).sort({ order: 1 }).lean(),
+      Project.find({}).sort({ order: 1 }).lean(),
+    ]);
+    userData = userDoc ? JSON.parse(JSON.stringify(userDoc)) : null;
+    skills = JSON.parse(JSON.stringify(skillsDocs));
+    projects = JSON.parse(JSON.stringify(projectsDocs));
+  } catch (error) {
+    console.error('DB Error on homepage:', error);
+    // Fall through with fallback content — page still renders
+  }
 
   return (
     <>

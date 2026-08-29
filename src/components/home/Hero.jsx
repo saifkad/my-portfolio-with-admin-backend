@@ -17,7 +17,7 @@ export default function Hero({ userData }) {
         clearInterval(typing);
       }
     }, 100);
-    
+
     return () => clearInterval(typing);
   }, []);
 
@@ -26,7 +26,6 @@ export default function Hero({ userData }) {
       {/* Animated Background */}
       <div className="absolute inset-0 bg-gradient-to-br from-gray-50 via-blue-50 to-purple-50 dark:from-gray-900 dark:via-blue-900/20 dark:to-purple-900/20 transition-colors duration-500">
         <div className="absolute inset-0 bg-[url('/grid.svg')] opacity-10 dark:opacity-20"></div>
-        {/* Animated Blobs */}
         <div className="absolute top-20 left-20 w-72 h-72 bg-purple-300 dark:bg-purple-600 rounded-full mix-blend-multiply dark:mix-blend-screen filter blur-3xl opacity-30 animate-blob"></div>
         <div className="absolute top-20 right-20 w-72 h-72 bg-yellow-300 dark:bg-blue-600 rounded-full mix-blend-multiply dark:mix-blend-screen filter blur-3xl opacity-30 animate-blob animation-delay-2000"></div>
       </div>
@@ -39,19 +38,20 @@ export default function Hero({ userData }) {
             alt="Profile"
             width={170}
             height={170}
-            className="relative mt-2 w-56 h-56 rounded-full border-4 border-white dark:border-gray-800 mx-auto object-cover shadow-2xl"
+            unoptimized={userData?.profileImage?.startsWith('http')}
+            className="relative mt-2 w-64 h-64 rounded-full border-4 border-white dark:border-gray-800 mx-auto object-cover shadow-2xl"
           />
           <div className="absolute bottom-2 right-2 w-6 h-6 bg-green-500 rounded-full border-4 border-white dark:border-gray-900 animate-pulse"></div>
         </div>
 
-        <h1 className="text-5xl md:text-7xl font-bold mb-4 bg-clip-text text-transparent bg-gradient-to-r from-gray-900 via-blue-800 to-purple-800 dark:from-blue-400 dark:via-purple-400 dark:to-pink-400 animate-fade-in">
+        <h1 className="text-5xl md:text-7xl font-bold mb-4 bg-clip-text text-transparent bg-gradient-to-r from-gray-900 via-blue-800 to-purple-800 dark:from-blue-400 dark:via-purple-400 dark:to-pink-400">
           {userData?.name || 'John Doe'}
         </h1>
 
         {/* Location Information */}
         <div className="flex items-center justify-center gap-2 text-lg md:text-xl text-gray-600 dark:text-gray-400 mb-6 animate-slide-up">
-            <MapPin size={20} className="text-primary-500" />
-            <span>{userData?.location || 'Poland'}</span>
+          <MapPin size={20} className="text-primary-500" />
+          <span>{userData?.location || 'Poland'}</span>
         </div>
 
         <div className="text-2xl md:text-3xl text-gray-700 dark:text-gray-300 mb-8 h-10 font-light">
@@ -66,13 +66,13 @@ export default function Hero({ userData }) {
         <div className="flex justify-center space-x-6 animate-slide-up" style={{ animationDelay: '0.4s' }}>
           <a
             href="#contact"
-            className="px-8 py-4 bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white w-40 h-50 rounded-full font-semibold transition-all transform hover:scale-105 shadow-lg shadow-blue-500/30"
+            className="px-8 py-4 bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white rounded-full font-semibold transition-all transform hover:scale-105"
           >
             Hire Me
           </a>
           <a
             href="#projects"
-            className="px-8 py-4 border-2 border-gray-300 dark:border-gray-700 hover:border-blue-500 hover:text-blue-500 dark:hover:text-blue-400 w-40 h-50 rounded-full font-semibold transition-all transform hover:scale-105 bg-white/50 dark:bg-gray-800/50 backdrop-blur-sm"
+            className="px-8 py-4 border-2 border-gray-300 dark:border-gray-700 hover:border-blue-500 hover:text-blue-500 dark:hover:text-blue-400 rounded-full font-semibold transition-all"
           >
             View Work
           </a>

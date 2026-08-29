@@ -5,14 +5,13 @@ import Image from 'next/image';
 
 export default function Projects({ projects }) {
   const [filter, setFilter] = useState('all');
-  const categories = ['all', ...new Set(projects.map(p => p.category))];
+  const categories = ['all', ...new Set(projects.map((p) => p.category))];
 
-  const filteredProjects = filter === 'all' 
-    ? projects 
-    : projects.filter(p => p.category === filter);
+  const filteredProjects =
+    filter === 'all' ? projects : projects.filter((p) => p.category === filter);
 
   return (
-    <section id="projects" className="py-24 bg-gray-50 dark:bg-gray-900 transition-colors duration-300">
+    <section id="projects" className="scroll-mt-24 py-24 bg-gray-50 dark:bg-gray-900 transition-colors duration-300">
       <div className="container mx-auto px-6">
         <div className="text-center mb-16">
           <h2 className="text-4xl font-bold text-gray-900 dark:text-gray-100 mb-4">
@@ -23,7 +22,7 @@ export default function Projects({ projects }) {
 
         {/* Filter Buttons */}
         <div className="flex flex-wrap justify-center gap-3 mb-12">
-          {categories.map(cat => (
+          {categories.map((cat) => (
             <button
               key={cat}
               onClick={() => setFilter(cat)}
@@ -40,19 +39,26 @@ export default function Projects({ projects }) {
 
         {/* Projects Grid */}
         <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
-          {filteredProjects.map((project, index) => (
+          {filteredProjects.map((project) => (
             <div
-              key={index}
+              key={project._id}
               className="group bg-white dark:bg-gray-800 rounded-2xl overflow-hidden border border-gray-200 dark:border-gray-700 shadow-lg hover:transform hover:-translate-y-2 transition-all duration-300"
             >
               <div className="relative h-48 overflow-hidden bg-gray-200 dark:bg-gray-900">
-                <Image
-                  src={project.image || 'https://via.placeholder.com/400x200'}
-                  alt={project.title}
-                  width={400}
-                  height={200}
-                  className="w-full h-full object-cover group-hover:scale-110 transition duration-700"
-                />
+                {project.image ? (
+                  <Image
+                    src={project.image}
+                    alt={project.title}
+                    width={400}
+                    height={200}
+                    unoptimized={project.image.startsWith('http')}
+                    className="w-full h-full object-cover group-hover:scale-110 transition duration-700"
+                  />
+                ) : (
+                  <div className="w-full h-full bg-gradient-to-br from-blue-500/20 to-purple-500/20 flex items-center justify-center text-gray-400 text-sm">
+                    No image
+                  </div>
+                )}
                 <div className="absolute inset-0 bg-gradient-to-t from-gray-900 dark:from-black to-transparent opacity-60"></div>
               </div>
 
@@ -81,20 +87,28 @@ export default function Projects({ projects }) {
                 </div>
 
                 <div className="flex justify-between items-center pt-4 border-t border-gray-200 dark:border-gray-700">
-                  <a
-                    href={project.githubUrl}
-                    target="_blank"
-                    className="flex items-center gap-2 text-sm text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white transition-colors"
-                  >
-                    <Github size={16} /> Code
-                  </a>
-                  <a
-                    href={project.liveUrl}
-                    target="_blank"
-                    className="flex items-center gap-2 text-sm text-gray-600 dark:text-gray-400 hover:text-blue-600 dark:hover:text-blue-400 transition-colors"
-                  >
-                    <ExternalLink size={16} /> Live Demo
-                  </a>
+                  {project.githubUrl ? (
+                    <a
+                      href={project.githubUrl}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="flex items-center gap-2 text-sm text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white transition-colors"
+                    >
+                      <Github size={16} /> Code
+                    </a>
+                  ) : (
+                    <span />
+                  )}
+                  {project.liveUrl && (
+                    <a
+                      href={project.liveUrl}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="flex items-center gap-2 text-sm text-gray-600 dark:text-gray-400 hover:text-blue-600 dark:hover:text-blue-400 transition-colors"
+                    >
+                      <ExternalLink size={16} /> Live Demo
+                    </a>
+                  )}
                 </div>
               </div>
             </div>

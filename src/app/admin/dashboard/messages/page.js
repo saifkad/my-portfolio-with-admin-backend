@@ -12,8 +12,8 @@ export default function MessagesPage() {
     try {
       setLoading(true);
       const res = await fetch('/api/contact');
-      const data = await res.json();
-      setMessages(data);
+      const data = res.ok ? await res.json() : [];
+      setMessages(Array.isArray(data) ? data : []);
     } catch (error) {
       console.error(error);
       toast.error('Failed to load messages');
@@ -59,14 +59,12 @@ export default function MessagesPage() {
 
       if (res.ok) {
         // Update UI locally
-        setMessages(
-          messages.map((msg) =>
-            msg._id === id ? { ...msg, read: !currentStatus } : msg
-          )
-        );
-        toast.success(`Marked as ${!currentStatus ? 'read' : 'unread'}`);
-      }
-    } catch (error) {
+              setMessages(messages.map((msg) => (msg._id === id ? { ...msg, read: !currentStatus } : msg)));
+      toast.success(`Marked as ${!currentStatus ? 'read' : 'unread'}`);
+    } else {
+      toast.error('Failed to update status');
+    }
+  } catch (error) {
       console.error(error);
       toast.error('Failed to update status');
     }

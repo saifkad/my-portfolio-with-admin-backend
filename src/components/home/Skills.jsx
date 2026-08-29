@@ -15,7 +15,7 @@ export default function Skills({ skills }) {
   }, {});
 
   return (
-    <section id="skills" className="py-20 bg-gray-50 dark:bg-gray-900 transition-colors duration-300">
+    <section id="skills" className="scroll-mt-24 py-20 bg-gray-50 dark:bg-gray-900 transition-colors duration-300">
       <div className="container mx-auto px-6">
         <h2 className="text-4xl font-bold text-center mb-16">
           Technical <span className="text-primary-600 dark:text-primary-400">Skills</span>
@@ -33,7 +33,7 @@ export default function Skills({ skills }) {
               
               <div className="space-y-5">
                 {categorySkills.map((skill, index) => (
-                  <div key={index}>
+                  <div key={skill._id || index}>
                     <div className="flex justify-between mb-2 font-medium text-sm">
                       <span className="text-gray-700 dark:text-gray-300">{skill.name}</span>
                       <span className="text-primary-600 dark:text-primary-400">{skill.proficiency}%</span>

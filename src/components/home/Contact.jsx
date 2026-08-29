@@ -33,7 +33,7 @@ export default function Contact() {
   };
 
   return (
-    <section id="contact" className="py-24 relative bg-gray-50 dark:bg-gray-900 transition-colors duration-300">
+    <section id="contact" className="scroll-mt-24 py-24 relative bg-gray-50 dark:bg-gray-900 transition-colors duration-300">
       <div className="container mx-auto px-6 max-w-4xl">
         <div className="bg-white dark:bg-gray-800 rounded-3xl p-8 md:p-12 relative overflow-hidden shadow-2xl border border-gray-200 dark:border-gray-700">
           
@@ -89,7 +89,7 @@ export default function Contact() {
               <button
                 type="submit"
                 disabled={loading}
-                className="w-full py-4 bg-gradient-to-r from-blue-600 to-purple-600 rounded-xl font-bold text-white hover:shadow-lg hover:shadow-blue-500/25 transition-all duration-300 flex items-center justify-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed"
+                className="group w-full py-4 bg-gradient-to-r from-blue-600 to-purple-600 rounded-xl font-bold text-white hover:shadow-lg hover:shadow-blue-500/25 transition-all duration-300 flex items-center justify-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed"
               >
                 {loading ? 'Sending...' : (
                   <>

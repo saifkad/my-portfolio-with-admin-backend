@@ -8,7 +8,7 @@ export async function GET() {
     const skills = await Skill.find({}).sort({ order: 1 });
     return NextResponse.json(skills);
   } catch (error) {
-    console.log("Error fetching skills:", error);
+    console.error('Error fetching skills:', error);
     return NextResponse.json({ error: 'Failed to fetch skills' }, { status: 500 });
   }
 }
@@ -17,11 +17,13 @@ export async function POST(request) {
   try {
     await connectDB();
     const data = await request.json();
-    console.log("Creating skill:", data);
     const skill = await Skill.create(data);
     return NextResponse.json(skill, { status: 201 });
   } catch (error) {
-    console.error("Error creating skill:", error);
+    if (error.name === 'ValidationError') {
+      return NextResponse.json({ error: error.message }, { status: 400 });
+    }
+    console.error('Error creating skill:', error);
     return NextResponse.json({ error: 'Failed to create skill' }, { status: 500 });
   }
 }

@@ -2,46 +2,39 @@ import { NextResponse } from 'next/server';
 import connectDB from '@/lib/mongodb';
 import Contact from '@/lib/models/Contact';
 
-// PATCH: To toggle 'read' status
+// PATCH: toggle read/unread (whitelisted to the 'read' field only)
 export async function PATCH(request, { params }) {
   try {
     await connectDB();
-    const id = params.id;
-    const body = await request.json();
-    
-    // Update the message (e.g., toggle read status)
-    const updatedMessage = await Contact.findByIdAndUpdate(
-      id, 
-      { read: body.read }, 
+    const { read } = await request.json();
+
+    const message = await Contact.findByIdAndUpdate(
+      params.id,
+      { read: Boolean(read) },
       { new: true }
     );
-
-    if (!updatedMessage) {
-      return NextResponse.json({ error: 'Message not found' }, { status: 404 });
-    }
-
-    return NextResponse.json(updatedMessage);
+    if (!message) return NextResponse.json({ error: 'Message not found' }, { status: 404 });
+    return NextResponse.json(message);
   } catch (error) {
-    console.error(error);
+    if (error.name === 'CastError') {
+      return NextResponse.json({ error: 'Invalid ID' }, { status: 400 });
+    }
+    console.error('Error updating message:', error);
     return NextResponse.json({ error: 'Failed to update message' }, { status: 500 });
   }
 }
 
-// DELETE: To remove the message
 export async function DELETE(request, { params }) {
   try {
     await connectDB();
-    const id = params.id;
-
-    const deletedMessage = await Contact.findByIdAndDelete(id);
-
-    if (!deletedMessage) {
-      return NextResponse.json({ error: 'Message not found' }, { status: 404 });
-    }
-
-    return NextResponse.json({ message: 'Message deleted successfully' });
+    const message = await Contact.findByIdAndDelete(params.id);
+    if (!message) return NextResponse.json({ error: 'Message not found' }, { status: 404 });
+    return NextResponse.json({ success: true });
   } catch (error) {
-    console.error(error);
+    if (error.name === 'CastError') {
+      return NextResponse.json({ error: 'Invalid ID' }, { status: 400 });
+    }
+    console.error('Error deleting message:', error);
     return NextResponse.json({ error: 'Failed to delete message' }, { status: 500 });
   }
 }

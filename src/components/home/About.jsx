@@ -2,7 +2,7 @@ import Image from 'next/image';
 
 export default function About({ userData }) {
   return (
-    <section id="about" className="py-20 bg-white dark:bg-gray-800/50">
+    <section id="about" className="scroll-mt-24 py-20 bg-white dark:bg-gray-800/50">
       <div className="container mx-auto px-6">
         <h2 className="text-4xl font-bold text-center mb-16">
           About <span className="text-primary-600 dark:text-primary-400">Me</span>

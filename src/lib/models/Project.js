@@ -9,7 +9,7 @@ const projectSchema = new mongoose.Schema({
   githubUrl: String,
   liveUrl: String,
   featured: Boolean,
-  order: Number,
+  order: { type: Number, default: 0 },
 });
 
 export default mongoose.models.Project || mongoose.model('Project', projectSchema);

@@ -5,7 +5,7 @@ const skillSchema = new mongoose.Schema({
   name: String,
   proficiency: Number,
   icon: String,
-  order: Number,
+  order: {type: Number, default: 0},
 });
 
 export default mongoose.models.Skill || mongoose.model('Skill', skillSchema);

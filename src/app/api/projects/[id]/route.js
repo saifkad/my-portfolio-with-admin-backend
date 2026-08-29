@@ -2,30 +2,38 @@ import { NextResponse } from 'next/server';
 import connectDB from '@/lib/mongodb';
 import Project from '@/lib/models/Project';
 
-// DELETE handler to remove a project
+export async function PUT(request, { params }) {
+  try {
+    await connectDB();
+    const body = await request.json();
+    const { _id, __v, ...data } = body;
+
+    const project = await Project.findByIdAndUpdate(params.id, data, {
+      new: true,
+      runValidators: true,
+    });
+    if (!project) return NextResponse.json({ error: 'Project not found' }, { status: 404 });
+    return NextResponse.json(project);
+  } catch (error) {
+    if (error.name === 'ValidationError' || error.name === 'CastError') {
+      return NextResponse.json({ error: error.message }, { status: 400 });
+    }
+    console.error('Error updating project:', error);
+    return NextResponse.json({ error: 'Failed to update project' }, { status: 500 });
+  }
+}
+
 export async function DELETE(request, { params }) {
   try {
     await connectDB();
-    
-    // Get the ID from the URL (e.g., /api/projects/12345 -> params.id is "12345")
-    const { id } = params;
-
-    // Find and delete the project
-    const deletedProject = await Project.findByIdAndDelete(id);
-
-    if (!deletedProject) {
-      return NextResponse.json(
-        { error: 'Project not found' },
-        { status: 404 }
-      );
-    }
-
-    return NextResponse.json({ success: true, message: 'Project deleted' });
+    const project = await Project.findByIdAndDelete(params.id);
+    if (!project) return NextResponse.json({ error: 'Project not found' }, { status: 404 });
+    return NextResponse.json({ success: true });
   } catch (error) {
-    console.error('Delete Error:', error);
-    return NextResponse.json(
-      { error: 'Failed to delete project' },
-      { status: 500 }
-    );
+    if (error.name === 'CastError') {
+      return NextResponse.json({ error: 'Invalid ID' }, { status: 400 });
+    }
+    console.error('Error deleting project:', error);
+    return NextResponse.json({ error: 'Failed to delete project' }, { status: 500 });
   }
 }
