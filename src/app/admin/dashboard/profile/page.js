@@ -7,6 +7,7 @@ import Image from 'next/image';
 const emptySocial = { github: '', linkedin: '', twitter: '' };
 const emptyForm = {
   name: '', title: '', email: '', location: '', bio: '',
+  heroIntro: '',
   profileImage: '', backgroundImage: '',
   socialLinks: { ...emptySocial },
 };
@@ -78,6 +79,18 @@ export default function ProfilePage() {
               value={formData.title || ''}
               onChange={(e) => setFormData({ ...formData, title: e.target.value })}
             />
+          </div>
+
+          <div>
+            <label className="block text-sm text-gray-400 mb-1">Hero Intro (short — landing section)</label>
+            <textarea
+              className="w-full bg-gray-700 border border-gray-600 rounded-lg p-3 text-white focus:outline-none focus:border-blue-500"
+              rows="2"
+              placeholder="One or two punchy sentences, e.g. 'I build fast, delightful web apps with React & Node.'"
+              value={formData.heroIntro || ''}
+              onChange={(e) => setFormData({ ...formData, heroIntro: e.target.value })}
+            />
+            <p className="text-xs text-gray-500 mt-1">Keep it short — the full story goes in Bio (About section).</p>
           </div>
 
           <div>

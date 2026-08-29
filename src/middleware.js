@@ -32,11 +32,12 @@ export async function middleware(request) {
   }
 
   // RULE 3: Admin API routes require a valid JWT
-  // Public exceptions: /api/auth/* and POST /api/contact (public contact form)
   if (path.startsWith('/api/')) {
     const isPublic =
       path.startsWith('/api/auth') ||
-      (path.startsWith('/api/contact') && request.method === 'POST');
+      // EXACT match — keeps /api/contact/[id]/reply protected
+      (path === '/api/contact' && request.method === 'POST') ||
+      (path === '/api/track' && request.method === 'POST');
 
     if (!isPublic && !(await verifyToken(request))) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });

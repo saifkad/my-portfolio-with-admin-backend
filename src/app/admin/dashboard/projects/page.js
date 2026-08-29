@@ -1,6 +1,6 @@
 'use client';
 import { useState, useEffect } from 'react';
-import { Plus, Trash2, ExternalLink } from 'lucide-react';
+import { Plus, Trash2, Pencil, ExternalLink, Github } from 'lucide-react';
 import toast from 'react-hot-toast';
 import Image from 'next/image';
 
@@ -12,7 +12,9 @@ const emptyForm = {
 export default function ProjectsPage() {
   const [projects, setProjects] = useState([]);
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [editingId, setEditingId] = useState(null);
   const [form, setForm] = useState(emptyForm);
+  const [syncing, setSyncing] = useState(false);
 
   const fetchProjects = async () => {
     const res = await fetch('/api/projects');
@@ -20,25 +22,33 @@ export default function ProjectsPage() {
     setProjects(Array.isArray(data) ? data : []);
   };
 
-  useEffect(() => {
-    fetchProjects();
-  }, []);
+  useEffect(() => { fetchProjects(); }, []);
+
+  const openAdd = () => { setForm(emptyForm); setEditingId(null); setIsModalOpen(true); };
+  const openEdit = (p) => {
+    setForm({
+      title: p.title || '', description: p.description || '', category: p.category || '',
+      image: p.image || '', technologies: (p.technologies || []).join(', '),
+      githubUrl: p.githubUrl || '', liveUrl: p.liveUrl || '', order: p.order ?? 0,
+    });
+    setEditingId(p._id);
+    setIsModalOpen(true);
+  };
+  const closeModal = () => { setIsModalOpen(false); setEditingId(null); setForm(emptyForm); };
 
   const handleSave = async (e) => {
     e.preventDefault();
     const techArray = form.technologies.split(',').map((t) => t.trim()).filter(Boolean);
-
+    const isEditing = Boolean(editingId);
     try {
-      const res = await fetch('/api/projects', {
-        method: 'POST',
+      const res = await fetch(isEditing ? `/api/projects/${editingId}` : '/api/projects', {
+        method: isEditing ? 'PUT' : 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ ...form, technologies: techArray }),
       });
-
       if (res.ok) {
-        toast.success('Project saved');
-        setIsModalOpen(false);
-        setForm(emptyForm);
+        toast.success(isEditing ? 'Project updated!' : 'Project saved');
+        closeModal();
         fetchProjects();
       } else {
         const data = await res.json().catch(() => ({}));
@@ -59,9 +69,26 @@ export default function ProjectsPage() {
       } else {
         toast.error('Failed to delete project');
       }
-    } catch (error) {
-      console.error(error);
+    } catch {
       toast.error('Something went wrong');
+    }
+  };
+
+  const handleSync = async () => {
+    setSyncing(true);
+    try {
+      const res = await fetch('/api/github/sync', { method: 'POST' });
+      const data = await res.json().catch(() => ({}));
+      if (res.ok) {
+        toast.success(`Synced! ${data.added} added, ${data.updated} updated`);
+        fetchProjects();
+      } else {
+        toast.error(data.error || 'Sync failed');
+      }
+    } catch {
+      toast.error('Something went wrong');
+    } finally {
+      setSyncing(false);
     }
   };
 
@@ -71,12 +98,22 @@ export default function ProjectsPage() {
     <div>
       <div className="flex justify-between items-center mb-6">
         <h1 className="text-2xl font-bold">Projects</h1>
-        <button
-          onClick={() => setIsModalOpen(true)}
-          className="bg-blue-600 px-4 py-2 rounded-lg flex items-center gap-2 hover:bg-blue-700 text-white"
-        >
-          <Plus size={18} /> Add Project
-        </button>
+        <div className="flex gap-3">
+          <button
+            onClick={handleSync}
+            disabled={syncing}
+            className="bg-gray-700 px-4 py-2 rounded-lg flex items-center gap-2 hover:bg-gray-600 text-white transition disabled:opacity-50"
+            title="Import your 6 most recently pushed GitHub repos"
+          >
+            <Github size={18} /> {syncing ? 'Syncing...' : 'Sync from GitHub'}
+          </button>
+          <button
+            onClick={openAdd}
+            className="bg-blue-600 px-4 py-2 rounded-lg flex items-center gap-2 hover:bg-blue-700 text-white"
+          >
+            <Plus size={18} /> Add Project
+          </button>
+        </div>
       </div>
 
       <div className="grid gap-4">
@@ -85,10 +122,7 @@ export default function ProjectsPage() {
             <div className="flex items-center gap-4">
               {p.image ? (
                 <Image
-                  src={p.image}
-                  alt=""
-                  width={60}
-                  height={60}
+                  src={p.image} alt="" width={60} height={60}
                   unoptimized={p.image.startsWith('http')}
                   className="w-16 h-16 object-cover rounded bg-gray-700"
                 />
@@ -112,6 +146,9 @@ export default function ProjectsPage() {
                   <ExternalLink size={18} />
                 </a>
               )}
+              <button onClick={() => openEdit(p)} className="text-gray-400 hover:text-blue-400 p-2 rounded transition" title="Edit">
+                <Pencil size={18} />
+              </button>
               <button
                 onClick={() => handleDelete(p._id)}
                 className="text-red-400 hover:text-red-500 transition p-2 hover:bg-red-500/10 rounded"
@@ -125,13 +162,13 @@ export default function ProjectsPage() {
       </div>
 
       {isModalOpen && (
-        <div className="fixed inset-0 bg-black/80 flex justify-center items-center z-50 p-4" onClick={() => setIsModalOpen(false)}>
+        <div className="fixed inset-0 bg-black/80 flex justify-center items-center z-50 p-4" onClick={closeModal}>
           <form
             onSubmit={handleSave}
             onClick={(e) => e.stopPropagation()}
             className="bg-gray-800 p-6 rounded-xl w-full max-w-lg space-y-4 max-h-[90vh] overflow-y-auto border border-gray-700"
           >
-            <h2 className="text-xl font-bold mb-4 text-white">Add New Project</h2>
+            <h2 className="text-xl font-bold mb-4 text-white">{editingId ? 'Edit Project' : 'Add New Project'}</h2>
 
             <input className={inputCls} placeholder="Title" required
               value={form.title} onChange={(e) => setForm({ ...form, title: e.target.value })} />
@@ -156,6 +193,7 @@ export default function ProjectsPage() {
                 <option value="Fullstack">Fullstack</option>
                 <option value="Python">Python</option>
                 <option value="Design">Design</option>
+                <option value="GitHub">GitHub</option>
               </select>
             </div>
 
@@ -176,12 +214,12 @@ export default function ProjectsPage() {
             </div>
 
             <div className="flex justify-end gap-2 mt-6">
-              <button type="button" onClick={() => setIsModalOpen(false)}
+              <button type="button" onClick={closeModal}
                 className="px-4 py-2 bg-gray-600 hover:bg-gray-500 rounded text-white transition">
                 Cancel
               </button>
               <button type="submit" className="px-4 py-2 bg-blue-600 hover:bg-blue-700 rounded text-white transition">
-                Save Project
+                {editingId ? 'Update Project' : 'Save Project'}
               </button>
             </div>
           </form>

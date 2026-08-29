@@ -1,9 +1,18 @@
 import { NextResponse } from 'next/server';
 import { sign } from 'jsonwebtoken';
 import { cookies } from 'next/headers';
+import { rateLimit, getClientIp } from '@/lib/rateLimit';
 
 export async function POST(request) {
   try {
+    // Rate limit: 5 attempts per 15 minutes per IP
+    const limited = rateLimit(`login:${getClientIp(request)}`, 5, 15 * 60 * 1000);
+    if (!limited.ok) {
+      return NextResponse.json(
+        { error: `Too many attempts. Try again in ${Math.ceil(limited.retryAfter / 60)} minutes.` },
+        { status: 429 }
+      );
+    }
     // Fail loudly if env vars are missing (instead of a cryptic 500 later)
     if (!process.env.JWT_SECRET || !process.env.ADMIN_EMAIL || !process.env.ADMIN_PASSWORD) {
       console.error('Missing env vars: JWT_SECRET, ADMIN_EMAIL, or ADMIN_PASSWORD');

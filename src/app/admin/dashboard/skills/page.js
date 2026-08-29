@@ -1,6 +1,6 @@
 'use client';
 import { useState, useEffect } from 'react';
-import { Plus, Trash2, Code2 } from 'lucide-react';
+import { Plus, Trash2, Pencil, Code2 } from 'lucide-react';
 import toast from 'react-hot-toast';
 
 const emptyForm = { category: 'frontend', name: '', proficiency: 50, order: 0 };
@@ -8,6 +8,7 @@ const emptyForm = { category: 'frontend', name: '', proficiency: 50, order: 0 };
 export default function SkillsPage() {
   const [skills, setSkills] = useState([]);
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [editingId, setEditingId] = useState(null);
   const [form, setForm] = useState(emptyForm);
 
   const loadSkills = () => {
@@ -16,26 +17,37 @@ export default function SkillsPage() {
       .then((data) => setSkills(Array.isArray(data) ? data : []));
   };
 
-  useEffect(() => {
-    loadSkills();
-  }, []);
+  useEffect(() => { loadSkills(); }, []);
+
+  const openAdd = () => { setForm(emptyForm); setEditingId(null); setIsModalOpen(true); };
+  const openEdit = (s) => {
+    setForm({
+      category: s.category || 'frontend',
+      name: s.name || '',
+      proficiency: s.proficiency ?? 50,
+      order: s.order ?? 0,
+    });
+    setEditingId(s._id);
+    setIsModalOpen(true);
+  };
+  const closeModal = () => { setIsModalOpen(false); setEditingId(null); setForm(emptyForm); };
 
   const handleSave = async (e) => {
     e.preventDefault();
+    const isEditing = Boolean(editingId);
     try {
-      const res = await fetch('/api/skills', {
-        method: 'POST',
+      const res = await fetch(isEditing ? `/api/skills/${editingId}` : '/api/skills', {
+        method: isEditing ? 'PUT' : 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(form),
       });
       if (res.ok) {
-        toast.success('Skill added!');
-        setIsModalOpen(false);
-        setForm(emptyForm);
+        toast.success(isEditing ? 'Skill updated!' : 'Skill added!');
+        closeModal();
         loadSkills();
       } else {
         const data = await res.json().catch(() => ({}));
-        toast.error(data.error || 'Failed to add skill');
+        toast.error(data.error || 'Failed to save skill');
       }
     } catch {
       toast.error('Something went wrong');
@@ -52,8 +64,7 @@ export default function SkillsPage() {
       } else {
         toast.error('Failed to delete skill');
       }
-    } catch (error) {
-      console.error('Delete Error:', error);
+    } catch {
       toast.error('Failed to delete skill');
     }
   };
@@ -62,7 +73,7 @@ export default function SkillsPage() {
     <div>
       <div className="flex justify-between items-center mb-6">
         <h1 className="text-2xl font-bold flex items-center gap-2"><Code2 size={24} /> Skills</h1>
-        <button onClick={() => setIsModalOpen(true)} className="bg-blue-600 px-4 py-2 rounded-lg flex items-center gap-2 hover:bg-blue-700">
+        <button onClick={openAdd} className="bg-blue-600 px-4 py-2 rounded-lg flex items-center gap-2 hover:bg-blue-700">
           <Plus size={18} /> Add Skill
         </button>
       </div>
@@ -72,7 +83,14 @@ export default function SkillsPage() {
           <div key={s._id} className="bg-gray-800 p-4 rounded-lg border border-gray-700">
             <div className="flex justify-between items-start mb-2">
               <span className="text-xs uppercase tracking-wider text-blue-400 font-bold">{s.category}</span>
-              <button onClick={() => handleDelete(s._id)} className="text-gray-500 hover:text-red-400"><Trash2 size={16} /></button>
+              <div className="flex gap-2">
+                <button onClick={() => openEdit(s)} className="text-gray-500 hover:text-blue-400" title="Edit">
+                  <Pencil size={16} />
+                </button>
+                <button onClick={() => handleDelete(s._id)} className="text-gray-500 hover:text-red-400" title="Delete">
+                  <Trash2 size={16} />
+                </button>
+              </div>
             </div>
             <h3 className="font-bold text-lg">{s.name}</h3>
             <div className="w-full bg-gray-700 rounded-full h-2 mt-2">
@@ -84,13 +102,9 @@ export default function SkillsPage() {
       </div>
 
       {isModalOpen && (
-        <div className="fixed inset-0 bg-black/80 flex justify-center items-center z-50" onClick={() => setIsModalOpen(false)}>
-          <form
-            onSubmit={handleSave}
-            onClick={(e) => e.stopPropagation()}
-            className="bg-gray-800 p-6 rounded-xl w-full max-w-md space-y-4"
-          >
-            <h2 className="text-xl font-bold">Add New Skill</h2>
+        <div className="fixed inset-0 bg-black/80 flex justify-center items-center z-50" onClick={closeModal}>
+          <form onSubmit={handleSave} onClick={(e) => e.stopPropagation()} className="bg-gray-800 p-6 rounded-xl w-full max-w-md space-y-4">
+            <h2 className="text-xl font-bold">{editingId ? 'Edit Skill' : 'Add New Skill'}</h2>
 
             <select
               className="w-full bg-gray-700 p-3 rounded text-white"
@@ -124,12 +138,14 @@ export default function SkillsPage() {
               className="w-full bg-gray-700 p-3 rounded text-white"
               placeholder="Order (Number)"
               value={form.order}
-              onChange={(e) => setForm({ ...form, order: parseInt(e.target.value) })}
+              onChange={(e) => setForm({ ...form, order: parseInt(e.target.value) || 0 })}
             />
 
             <div className="flex justify-end gap-2 mt-4">
-              <button type="button" onClick={() => setIsModalOpen(false)} className="px-4 py-2 bg-gray-600 rounded">Cancel</button>
-              <button type="submit" className="px-4 py-2 bg-blue-600 rounded">Save</button>
+              <button type="button" onClick={closeModal} className="px-4 py-2 bg-gray-600 rounded">Cancel</button>
+              <button type="submit" className="px-4 py-2 bg-blue-600 rounded">
+                {editingId ? 'Update' : 'Save'}
+              </button>
             </div>
           </form>
         </div>

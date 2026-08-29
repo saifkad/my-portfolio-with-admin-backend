@@ -60,7 +60,7 @@ export default function Hero({ userData }) {
         </div>
 
         <p className="text-xl text-gray-600 dark:text-gray-400 max-w-2xl mx-auto mb-12 leading-relaxed animate-slide-up" style={{ animationDelay: '0.2s' }}>
-          {userData?.bio || 'Creating amazing web experiences with modern technologies and pixel-perfect design.'}
+          {userData?.heroIntro || 'Creating amazing web experiences with modern technologies and pixel-perfect design.'}
         </p>
 
         <div className="flex justify-center space-x-6 animate-slide-up" style={{ animationDelay: '0.4s' }}>

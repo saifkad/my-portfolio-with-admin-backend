@@ -1,3 +1,4 @@
+import { revalidatePath } from 'next/cache';
 export const dynamic = 'force-dynamic';
 import { NextResponse } from 'next/server';
 import connectDB from '@/lib/mongodb';
@@ -20,6 +21,7 @@ export async function POST(request) {
     const data = await request.json();
     const project = await Project.create(data);
     return NextResponse.json(project, { status: 201 });
+    revalidatePath('/');
   } catch (error) {
     if (error.name === 'ValidationError') {
       return NextResponse.json({ error: error.message }, { status: 400 });

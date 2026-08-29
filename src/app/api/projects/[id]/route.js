@@ -1,3 +1,4 @@
+import { revalidatePath } from 'next/cache';
 import { NextResponse } from 'next/server';
 import connectDB from '@/lib/mongodb';
 import Project from '@/lib/models/Project';
@@ -14,6 +15,7 @@ export async function PUT(request, { params }) {
     });
     if (!project) return NextResponse.json({ error: 'Project not found' }, { status: 404 });
     return NextResponse.json(project);
+    revalidatePath('/');
   } catch (error) {
     if (error.name === 'ValidationError' || error.name === 'CastError') {
       return NextResponse.json({ error: error.message }, { status: 400 });
@@ -29,6 +31,7 @@ export async function DELETE(request, { params }) {
     const project = await Project.findByIdAndDelete(params.id);
     if (!project) return NextResponse.json({ error: 'Project not found' }, { status: 404 });
     return NextResponse.json({ success: true });
+    revalidatePath('/');
   } catch (error) {
     if (error.name === 'CastError') {
       return NextResponse.json({ error: 'Invalid ID' }, { status: 400 });

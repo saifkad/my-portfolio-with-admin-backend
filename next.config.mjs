@@ -1,12 +1,13 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
+  env: {
+    // Baked in at build time — shown in the admin panel
+    NEXT_PUBLIC_BUILD_TIME: new Date().toISOString(),
+  },
   images: {
     remotePatterns: [
-      // Add other domains you plan to use (e.g., GitHub, Imgur, AWS)
-      {
-        protocol: 'https',
-        hostname: '**', // Allows all https domains (useful for admin dashboards where users paste any link)
-      },
+      // Allow any https host (admin can paste any image URL)
+      { protocol: 'https', hostname: '**' },
     ],
   },
 };

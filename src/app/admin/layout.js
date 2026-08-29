@@ -82,6 +82,11 @@ export default function AdminLayout({ children }) {
             <span>Logout</span>
           </button>
         </nav>
+        <p className="px-6 py-4 mt-4 border-t border-gray-700 text-xs text-gray-500">
+          Build: {process.env.NEXT_PUBLIC_BUILD_TIME
+            ? new Date(process.env.NEXT_PUBLIC_BUILD_TIME).toLocaleString()
+            : 'unknown'}
+        </p>
       </aside>
 
       {/* Main Content */}

@@ -4,7 +4,8 @@ const userSchema = new mongoose.Schema({
   name: String,
   title: String,
   email: String,
-  location: String, // <--- NEW FIELD
+  location: String,
+  heroIntro: String, 
   bio: String,
   profileImage: String,
   backgroundImage: String,
