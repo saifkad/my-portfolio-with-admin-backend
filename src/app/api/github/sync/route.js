@@ -12,6 +12,7 @@ export default async function POST() {
   }
 
   try {
+    await connectDB();
     const res = await fetch(
       `https://api.github.com/users/${username}/repos?sort=pushed&per_page=100`,
       { headers: { Accept: 'application/vnd.github+json' }, cache: 'no-store' }

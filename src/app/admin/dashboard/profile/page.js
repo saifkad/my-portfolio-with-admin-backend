@@ -22,6 +22,7 @@ export default function ProfilePage() {
       .then((data) => {
         if (data?.error) return;
         // Strip Mongo internals so they never get sent back on PUT
+        // eslint-disable-next-line @typescript-eslint/no-unused-vars
         const { _id, __v, createdAt, updatedAt, ...clean } = data || {};
         setFormData({ ...emptyForm, ...clean, socialLinks: clean.socialLinks || { ...emptySocial } });
       })

@@ -8,6 +8,7 @@ export async function PUT(request, { params }) {
   try {
     await connectDB();
     const body = await request.json();
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     const { _id, __v, ...data } = body; // strip internals
 
     const skill = await Skill.findByIdAndUpdate(params.id, data, {
