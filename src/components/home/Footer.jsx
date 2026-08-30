@@ -12,7 +12,7 @@ export default function Footer() {
 
           <div className="flex space-x-6">
             <a
-              href="https://github.com"
+              href="https://github.com/saif-al-dir"
               target="_blank"
               rel="noopener noreferrer"
               className="text-gray-400 hover:text-blue-400 transition"

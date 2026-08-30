@@ -194,6 +194,7 @@ export default function ProjectsPage() {
                 <option value="Python">Python</option>
                 <option value="Design">Design</option>
                 <option value="GitHub">GitHub</option>
+                <option value="AI/ML">AI/ML</option>
               </select>
             </div>
 
