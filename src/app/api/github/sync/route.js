@@ -5,7 +5,7 @@ import { revalidatePath } from 'next/cache';
 
 export const dynamic = 'force-dynamic';
 
-export default async function POST() {
+export async function POST() {
   const username = process.env.GITHUB_USERNAME;
   if (!username) {
     return NextResponse.json({ error: 'GITHUB_USERNAME is not configured' }, { status: 500 });
