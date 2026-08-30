@@ -1,8 +1,9 @@
-export const dynamic = 'force-dynamic';
 import { NextResponse } from 'next/server';
 import connectDB from '@/lib/mongodb';
 import User from '@/lib/models/User';
 import { revalidatePath } from 'next/cache';
+
+export const dynamic = 'force-dynamic'; // GET must never be build-time cached
 
 export async function GET() {
   try {
@@ -20,8 +21,6 @@ export async function PUT(request) {
     await connectDB();
     const body = await request.json();
 
-    // Whitelist: only these fields can ever be written.
-    // (Fixes the "_id is immutable" 500 when the form sends the whole doc back.)
     const data = {};
     for (const field of ['name', 'title', 'email', 'location', 'heroIntro', 'bio', 'profileImage', 'backgroundImage']) {
       if (body[field] !== undefined) data[field] = body[field];
@@ -41,7 +40,7 @@ export async function PUT(request) {
       setDefaultsOnInsert: true,
     });
 
-    revalidatePath('/');
+    revalidatePath('/'); // also refreshes the homepage metadata + OG card
 
     return NextResponse.json(user);
   } catch (error) {

@@ -1,8 +1,9 @@
-import { revalidatePath } from 'next/cache';
-export const dynamic = 'force-dynamic';
 import { NextResponse } from 'next/server';
 import connectDB from '@/lib/mongodb';
 import Skill from '@/lib/models/Skill';
+import { revalidatePath } from 'next/cache';
+
+export const dynamic = 'force-dynamic';
 
 export async function GET() {
   try {
@@ -20,9 +21,8 @@ export async function POST(request) {
     await connectDB();
     const data = await request.json();
     const skill = await Skill.create(data);
+    revalidatePath('/'); // flush the homepage cache so changes appear instantly
     return NextResponse.json(skill, { status: 201 });
-
-    revalidatePath('/');
   } catch (error) {
     if (error.name === 'ValidationError') {
       return NextResponse.json({ error: error.message }, { status: 400 });

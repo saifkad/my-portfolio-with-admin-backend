@@ -1,23 +1,22 @@
-import { revalidatePath } from 'next/cache';
-export const dynamic = 'force-dynamic';
 import { NextResponse } from 'next/server';
 import connectDB from '@/lib/mongodb';
 import Skill from '@/lib/models/Skill';
+import { revalidatePath } from 'next/cache';
 
 export async function PUT(request, { params }) {
   try {
     await connectDB();
     const body = await request.json();
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    const { _id, __v, ...data } = body; // strip internals
+    const { _id, __v, ...data } = body;
 
     const skill = await Skill.findByIdAndUpdate(params.id, data, {
       new: true,
       runValidators: true,
     });
     if (!skill) return NextResponse.json({ error: 'Skill not found' }, { status: 404 });
-    return NextResponse.json(skill);
     revalidatePath('/');
+    return NextResponse.json(skill);
   } catch (error) {
     if (error.name === 'ValidationError' || error.name === 'CastError') {
       return NextResponse.json({ error: error.message }, { status: 400 });
@@ -32,8 +31,8 @@ export async function DELETE(request, { params }) {
     await connectDB();
     const skill = await Skill.findByIdAndDelete(params.id);
     if (!skill) return NextResponse.json({ error: 'Skill not found' }, { status: 404 });
-    return NextResponse.json({ success: true });
     revalidatePath('/');
+    return NextResponse.json({ success: true });
   } catch (error) {
     if (error.name === 'CastError') {
       return NextResponse.json({ error: 'Invalid ID' }, { status: 400 });
