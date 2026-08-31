@@ -44,6 +44,15 @@ export default function Hero({ userData }) {
           <div className="absolute bottom-2 right-2 w-6 h-6 bg-green-500 rounded-full border-4 border-white dark:border-gray-900 animate-pulse"></div>
         </div>
 
+        {userData?.availableForWork && (
+          <div className="flex justify-center mb-4 animate-slide-up">
+            <span className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-green-500/10 border border-green-500/30 text-green-600 dark:text-green-400 text-sm font-medium">
+              <span className="w-2 h-2 rounded-full bg-green-500 animate-pulse"></span>
+              Open to opportunities
+            </span>
+          </div>
+        )}
+
         <h1 className="text-5xl md:text-7xl font-bold mb-4 bg-clip-text text-transparent bg-gradient-to-r from-gray-900 via-blue-800 to-purple-800 dark:from-blue-400 dark:via-purple-400 dark:to-pink-400">
           {userData?.name || 'John Doe'}
         </h1>

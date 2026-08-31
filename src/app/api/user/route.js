@@ -22,7 +22,7 @@ export async function PUT(request) {
     const body = await request.json();
 
     const data = {};
-    for (const field of ['name', 'title', 'email', 'location', 'heroIntro', 'bio', 'profileImage', 'backgroundImage']) {
+    for (const field of ['name', 'title', 'email', 'location', 'heroIntro', 'bio', 'profileImage', 'backgroundImage', 'availableForWork']) {
       if (body[field] !== undefined) data[field] = body[field];
     }
     if (body.socialLinks) {

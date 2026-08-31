@@ -8,6 +8,7 @@ const emptySocial = { github: '', linkedin: '', twitter: '' };
 const emptyForm = {
   name: '', title: '', email: '', location: '', bio: '',
   heroIntro: '',
+  availableForWork: false,
   profileImage: '', backgroundImage: '',
   socialLinks: { ...emptySocial },
 };
@@ -102,6 +103,21 @@ export default function ProfilePage() {
               value={formData.location || ''}
               onChange={(e) => setFormData({ ...formData, location: e.target.value })}
             />
+          </div>
+
+          <div className="flex items-center justify-between p-3 bg-gray-700 rounded-lg">
+            <div>
+              <span className="block text-sm font-medium text-white">Open to opportunities</span>
+              <p className="text-xs text-gray-400">Shows a green badge in your hero section</p>
+            </div>
+            <button
+              type="button"
+              onClick={() => setFormData({ ...formData, availableForWork: !formData.availableForWork })}
+              className={`relative w-12 h-6 rounded-full transition ${formData.availableForWork ? 'bg-green-500' : 'bg-gray-600'}`}
+              aria-pressed={formData.availableForWork}
+            >
+              <span className={`absolute top-0.5 left-0.5 w-5 h-5 bg-white rounded-full transition-transform ${formData.availableForWork ? 'translate-x-6' : ''}`} />
+            </button>
           </div>
 
           <div>
