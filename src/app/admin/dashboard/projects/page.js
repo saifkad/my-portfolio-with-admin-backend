@@ -1,6 +1,6 @@
 'use client';
 import { useState, useEffect } from 'react';
-import { Plus, Trash2, Pencil, ExternalLink, Github } from 'lucide-react';
+import { Plus, Trash2, Pencil, ExternalLink } from 'lucide-react';
 import toast from 'react-hot-toast';
 import Image from 'next/image';
 
@@ -14,7 +14,6 @@ export default function ProjectsPage() {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [editingId, setEditingId] = useState(null);
   const [form, setForm] = useState(emptyForm);
-  const [syncing, setSyncing] = useState(false);
 
   const fetchProjects = async () => {
     const res = await fetch('/api/projects');
@@ -74,23 +73,6 @@ export default function ProjectsPage() {
     }
   };
 
-  const handleSync = async () => {
-    setSyncing(true);
-    try {
-      const res = await fetch('/api/github/sync', { method: 'POST' });
-      const data = await res.json().catch(() => ({}));
-      if (res.ok) {
-        toast.success(`Synced! ${data.added} added, ${data.updated} updated`);
-        fetchProjects();
-      } else {
-        toast.error(data.error || 'Sync failed');
-      }
-    } catch {
-      toast.error('Something went wrong');
-    } finally {
-      setSyncing(false);
-    }
-  };
 
   const inputCls = 'w-full bg-gray-700 p-3 rounded text-white border border-gray-600 focus:border-blue-500 outline-none';
 
@@ -99,14 +81,6 @@ export default function ProjectsPage() {
       <div className="flex justify-between items-center mb-6">
         <h1 className="text-2xl font-bold">Projects</h1>
         <div className="flex gap-3">
-          <button
-            onClick={handleSync}
-            disabled={syncing}
-            className="bg-gray-700 px-4 py-2 rounded-lg flex items-center gap-2 hover:bg-gray-600 text-white transition disabled:opacity-50"
-            title="Import your 6 most recently pushed GitHub repos"
-          >
-            <Github size={18} /> {syncing ? 'Syncing...' : 'Sync from GitHub'}
-          </button>
           <button
             onClick={openAdd}
             className="bg-blue-600 px-4 py-2 rounded-lg flex items-center gap-2 hover:bg-blue-700 text-white"
