@@ -44,6 +44,7 @@ export default function Header() {
           
           {/* Theme Toggle */}
           <button
+            aria-label="Toggle theme"
             onClick={() => setTheme(theme === 'dark' ? 'light' : 'dark')}
             className="p-2 rounded-full bg-gray-200 dark:bg-gray-800 text-gray-800 dark:text-yellow-400 hover:scale-110 transition-transform"
           >
@@ -53,13 +54,18 @@ export default function Header() {
 
         {/* Mobile Menu Button */}
         <div className="md:hidden flex items-center gap-4">
-             <button
+          <button
+            aria-label="Toggle theme"
             onClick={() => setTheme(theme === 'dark' ? 'light' : 'dark')}
             className="p-2 rounded-full bg-gray-200 dark:bg-gray-800"
           >
             {mounted && (theme === 'dark' ? <Sun size={20} /> : <Moon size={20} />)}
           </button>
-          <button className="text-gray-600 dark:text-gray-300" onClick={() => setIsOpen(!isOpen)}>
+          <button
+            aria-label={isOpen ? "Close menu" : "Open menu"}
+            className="text-gray-600 dark:text-gray-300"
+            onClick={() => setIsOpen(!isOpen)}
+          >
             {isOpen ? <X size={24} /> : <Menu size={24} />}
           </button>
         </div>

@@ -1,11 +1,13 @@
 'use client';
+import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { usePathname, useRouter } from 'next/navigation';
-import { 
-  LayoutDashboard, 
-  User, 
-  Code2, 
-  FolderKanban, 
+import {
+  LayoutDashboard,
+  User,
+  Code2,
+  FolderKanban,
+  Newspaper,
   Mail,
   LogOut,
   Settings
@@ -15,13 +17,30 @@ import toast from 'react-hot-toast';
 export default function AdminLayout({ children }) {
   const pathname = usePathname();
   const router = useRouter();
+  const [unread, setUnread] = useState(0);
+
+  // Unread message count for the sidebar badge
+  useEffect(() => {
+    const fetchUnread = async () => {
+      try {
+        const res = await fetch('/api/contact');
+        if (res.ok) {
+          const msgs = await res.json();
+          if (Array.isArray(msgs)) setUnread(msgs.filter((m) => !m.read).length);
+        }
+      } catch {
+        // badge is cosmetic — never let it break the panel
+      }
+    };
+    fetchUnread();
+  }, [pathname]); // re-check on navigation (reads a message → badge updates)
 
   const handleLogout = async () => {
     try {
       const res = await fetch('/api/auth/logout', { method: 'POST' });
-        if (res.ok) {
+      if (res.ok) {
         toast.success('Logged out successfully');
-        router.push('/'); // was '/admin/login' — that page requires ?secret= and would bounce you anyway
+        router.push('/');
       } else {
         toast.error('Failed to logout');
       }
@@ -36,6 +55,7 @@ export default function AdminLayout({ children }) {
     { href: '/admin/dashboard/profile', icon: User, label: 'Profile' },
     { href: '/admin/dashboard/skills', icon: Code2, label: 'Skills' },
     { href: '/admin/dashboard/projects', icon: FolderKanban, label: 'Projects' },
+    { href: '/admin/dashboard/blog', icon: Newspaper, label: 'Blog' },
     { href: '/admin/dashboard/messages', icon: Mail, label: 'Messages' },
     { href: '/admin/dashboard/settings', icon: Settings, label: 'Settings' },
   ];
@@ -47,7 +67,6 @@ export default function AdminLayout({ children }) {
 
   return (
     <div className="min-h-screen bg-gray-900 flex">
-      {/* Sidebar */}
       <aside className="w-64 bg-gray-800 border-r border-gray-700">
         <div className="p-6">
           <h2 className="text-2xl font-bold text-blue-400">Admin Panel</h2>
@@ -57,7 +76,7 @@ export default function AdminLayout({ children }) {
           {menuItems.map((item) => {
             const Icon = item.icon;
             const isActive = pathname === item.href;
-            
+
             return (
               <Link
                 key={item.href}
@@ -70,6 +89,11 @@ export default function AdminLayout({ children }) {
               >
                 <Icon size={20} />
                 <span>{item.label}</span>
+                {item.label === 'Messages' && unread > 0 && (
+                  <span className="ml-auto bg-blue-500 text-white text-xs font-bold px-2 py-0.5 rounded-full">
+                    {unread}
+                  </span>
+                )}
               </Link>
             );
           })}
@@ -82,6 +106,7 @@ export default function AdminLayout({ children }) {
             <span>Logout</span>
           </button>
         </nav>
+
         <p className="px-6 py-4 mt-4 border-t border-gray-700 text-xs text-gray-500">
           Build: {process.env.NEXT_PUBLIC_BUILD_TIME
             ? new Date(process.env.NEXT_PUBLIC_BUILD_TIME).toLocaleString()
@@ -89,11 +114,8 @@ export default function AdminLayout({ children }) {
         </p>
       </aside>
 
-      {/* Main Content */}
       <main className="flex-1 overflow-auto">
-        <div className="p-8">
-          {children}
-        </div>
+        <div className="p-8">{children}</div>
       </main>
     </div>
   );

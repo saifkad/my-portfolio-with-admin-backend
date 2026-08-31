@@ -64,7 +64,7 @@ export default async function Home() {
         />
       )}
       <Header />
-      <main>
+      <main id="main-content" className="flex flex-col gap-16">
         <Hero userData={userData} />
         <About userData={userData} />
         <Skills skills={skills} />

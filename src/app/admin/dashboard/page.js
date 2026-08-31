@@ -65,7 +65,27 @@ export default function AdminDashboard() {
     { title: 'Visitors (7d)', value: stats.visitsWeek, icon: Users, color: 'pink' },
   ];
 
-  if (loading) return <div className="p-8">Loading stats...</div>;
+    if (loading) {
+    return (
+      <div>
+        <div className="h-8 w-40 bg-gray-800 rounded animate-pulse mb-8" />
+        <div className="grid md:grid-cols-2 lg:grid-cols-5 gap-6 mb-8">
+          {Array.from({ length: 5 }).map((_, i) => (
+            <div key={i} className="bg-gray-800 rounded-xl p-6">
+              <div className="flex items-center justify-between mb-4">
+                <div className="w-12 h-12 bg-gray-700 rounded-lg animate-pulse" />
+                <div className="h-8 w-10 bg-gray-700 rounded animate-pulse" />
+              </div>
+              <div className="h-4 w-20 bg-gray-700 rounded animate-pulse" />
+            </div>
+          ))}
+        </div>
+        <div className="bg-gray-800 rounded-xl p-6">
+          <div className="h-40 bg-gray-700 rounded animate-pulse" />
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div>

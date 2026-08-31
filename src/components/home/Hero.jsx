@@ -5,7 +5,7 @@ import Image from 'next/image';
 
 export default function Hero({ userData }) {
   const [typedText, setTypedText] = useState('');
-  const fullText = 'Full Stack Developer';
+  const fullText = userData?.title || 'Full Stack Developer';
 
   useEffect(() => {
     let i = 0;
@@ -19,7 +19,7 @@ export default function Hero({ userData }) {
     }, 100);
 
     return () => clearInterval(typing);
-  }, []);
+  }, [fullText]);
 
   return (
     <section id="home" className="min-h-screen p-12 flex items-center justify-center relative overflow-hidden pt-20">
